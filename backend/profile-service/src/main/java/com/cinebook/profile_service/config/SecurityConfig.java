@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -23,13 +24,29 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // Disable CSRF for stateless JWT + allow H2 console frames
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers(
+                    AntPathRequestMatcher.antMatcher("/h2-console/**")
+                )
+                .disable()
+            )
+            // Allow H2 console to render in iframes (X-Frame-Options)
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin())
+            )
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
             .authorizeHttpRequests(auth -> auth
+                // Public endpoints
                 .requestMatchers(
                     "/api/users/register",
                     "/api/users/login",
-                    "/actuator/**"
+                    "/actuator/**",
+                    // H2 Console — permit all
+                    "/h2-console",
+                    "/h2-console/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
