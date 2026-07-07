@@ -4,7 +4,7 @@ services:
     name: eureka-server
     env: docker
     dockerContext: ./backend/eureka-server
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./backend/eureka-server/Dockerfile
     plan: free
     healthCheckPath: /actuator/health
     
@@ -13,7 +13,7 @@ services:
     name: profile-service
     env: docker
     dockerContext: ./backend/profile-service
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./backend/profile-service/Dockerfile
     plan: free
     healthCheckPath: /actuator/health
     envVars:
@@ -39,7 +39,7 @@ services:
     name: gateway
     env: docker
     dockerContext: ./backend/gateway
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./backend/gateway/Dockerfile
     plan: free
     healthCheckPath: /actuator/health
     envVars:
