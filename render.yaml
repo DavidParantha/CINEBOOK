@@ -54,8 +54,18 @@ services:
       - key: EUREKA_URL
         value: https://eureka-server.onrender.com/eureka/
 
+  # 4. Frontend React App
+  - type: web
+    name: cinebook-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: REPLACE_ME_WITH_GATEWAY_URL
+
 databases:
-  # 4. PostgreSQL Database
+  # 5. PostgreSQL Database
   - name: cinebook-db
     plan: free
     postgresMajorVersion: 15
